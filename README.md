@@ -59,6 +59,14 @@ the Node.js serverless runtime with `maxDuration` set per-route; if OCR on
 larger documents times out on the Vercel Hobby plan, either upgrade to Pro
 or reduce `MAX_PAGES_TO_RASTERIZE` in `lib/pdf.ts`.
 
+`/api/extract` enforces a 10MB application-level cap (`MAX_FILE_BYTES` in
+`app/api/extract/route.ts`). Vercel serverless functions also impose their
+own request body size limit, which has historically been smaller than 10MB
+depending on plan/configuration and may not match this app's cap. If
+uploads fail unexpectedly on Vercel with no clear size error from this app,
+check Vercel's current docs for the platform's request-body limit on your
+plan, and lower `MAX_FILE_BYTES` to match if it's smaller than 10MB.
+
 ## Manual verification checklist
 
 Automated tests cover schema validation, field mapping, OCR branching logic,
