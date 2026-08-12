@@ -48,17 +48,38 @@ function extractCertAndKeyFromP12(
   const p12Asn1 = forge.asn1.fromDer(forge.util.createBuffer(p12Buffer.toString("binary")));
   const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, passphrase);
 
-  const certBag = p12.getBags({ bagType: forge.pki.oids.certBag })[forge.pki.oids.certBag]?.[0];
-  if (!certBag?.cert) {
+  const certBags = p12.getBags({ bagType: forge.pki.oids.certBag })[forge.pki.oids.certBag] ?? [];
+  if (certBags.length === 0) {
+    throw new Error("No certificate found in APPLE_PASS_CERT_BASE64 (.p12) contents");
+  }
+  if (certBags.length > 1) {
+    throw new Error(
+      `Found ${certBags.length} certificates in APPLE_PASS_CERT_BASE64 (.p12) — expected exactly 1; ` +
+        "a bundle with intermediate certs is not supported"
+    );
+  }
+  const certBag = certBags[0];
+  if (!certBag.cert) {
     throw new Error("No certificate found in APPLE_PASS_CERT_BASE64 (.p12) contents");
   }
 
-  const shroudedKeyBag = p12.getBags({ bagType: forge.pki.oids.pkcs8ShroudedKeyBag })[
-    forge.pki.oids.pkcs8ShroudedKeyBag
-  ]?.[0];
-  const keyBag =
-    shroudedKeyBag ?? p12.getBags({ bagType: forge.pki.oids.keyBag })[forge.pki.oids.keyBag]?.[0];
-  if (!keyBag?.key) {
+  const shroudedKeyBags =
+    p12.getBags({ bagType: forge.pki.oids.pkcs8ShroudedKeyBag })[forge.pki.oids.pkcs8ShroudedKeyBag] ?? [];
+  const unshroudedKeyBags =
+    shroudedKeyBags.length === 0
+      ? (p12.getBags({ bagType: forge.pki.oids.keyBag })[forge.pki.oids.keyBag] ?? [])
+      : [];
+  const keyBags = shroudedKeyBags.length > 0 ? shroudedKeyBags : unshroudedKeyBags;
+  if (keyBags.length === 0) {
+    throw new Error("No private key found in APPLE_PASS_CERT_BASE64 (.p12) contents");
+  }
+  if (keyBags.length > 1) {
+    throw new Error(
+      `Found ${keyBags.length} private keys in APPLE_PASS_CERT_BASE64 (.p12) — expected exactly 1`
+    );
+  }
+  const keyBag = keyBags[0];
+  if (!keyBag.key) {
     throw new Error("No private key found in APPLE_PASS_CERT_BASE64 (.p12) contents");
   }
 
