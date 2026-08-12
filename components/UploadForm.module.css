@@ -29,7 +29,7 @@
   justify-content: center;
   gap: 10px;
   height: 176px;
-  border: 1px dashed var(--color-border-strong);
+  border: 1px dashed var(--color-border);
   border-radius: var(--radius-control);
   background: var(--color-bg-subtle);
   color: var(--color-fg-muted);
