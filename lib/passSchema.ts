@@ -32,6 +32,7 @@ export const passDataSchema = z.object({
   primaryFields: z.array(passFieldSchema).min(1).max(3),
   secondaryFields: z.array(passFieldSchema).max(4),
   auxiliaryFields: z.array(passFieldSchema).max(4),
+  transitType: z.enum(["Air", "Boat", "Bus", "Generic", "Train"]).optional(),
 });
 
 export type PassData = z.infer<typeof passDataSchema>;

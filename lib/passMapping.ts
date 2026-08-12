@@ -7,16 +7,31 @@ const BARCODE_FORMAT_MAP: Record<PassData["barcodeFormat"], string> = {
   Code128: "PKBarcodeFormatCode128",
 };
 
+const TRANSIT_TYPE_MAP: Record<
+  NonNullable<PassData["transitType"]>,
+  string
+> = {
+  Air: "PKTransitTypeAir",
+  Boat: "PKTransitTypeBoat",
+  Bus: "PKTransitTypeBus",
+  Generic: "PKTransitTypeGeneric",
+  Train: "PKTransitTypeTrain",
+};
+
 export function mapPassDataToPassJson(data: PassData) {
   const structureFields = {
     primaryFields: data.primaryFields,
     secondaryFields: data.secondaryFields,
     auxiliaryFields: data.auxiliaryFields,
+    ...(data.style === "boardingPass"
+      ? { transitType: TRANSIT_TYPE_MAP[data.transitType ?? "Generic"] }
+      : {}),
   };
 
   return {
     description: data.description,
     organizationName: data.organizationName,
+    logoText: data.title,
     backgroundColor: data.backgroundColor,
     foregroundColor: data.foregroundColor,
     barcodes: [

@@ -17,13 +17,15 @@ Respond with ONLY a JSON object (no markdown fences, no commentary) matching thi
   "foregroundColor": "rgb(r, g, b)",
   "primaryFields": [{ "key": string, "label": string, "value": string }],
   "secondaryFields": [{ "key": string, "label": string, "value": string }],
-  "auxiliaryFields": [{ "key": string, "label": string, "value": string }]
+  "auxiliaryFields": [{ "key": string, "label": string, "value": string }],
+  "transitType": "Air" | "Boat" | "Bus" | "Generic" | "Train" (optional)
 }
 
 Pick "style" based on what the document actually is. Use "generic" if unsure.
 barcodeValue should be the most likely scannable code/confirmation number in the text; if truly nothing barcode-like exists, use the confirmation/reference number as a Code128 value.
 primaryFields must have 1-3 entries, secondaryFields and auxiliaryFields up to 4 entries each.
-Colors must be "rgb(r, g, b)" strings.`;
+Colors must be "rgb(r, g, b)" strings.
+Only include "transitType" when "style" is "boardingPass" (pick the mode of transit the document describes; use "Generic" if unclear). Omit it entirely for every other style.`;
 
 export class StructuringError extends Error {
   rawText: string;
