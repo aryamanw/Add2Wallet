@@ -7,3 +7,13 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Design Context
+
+This is a **product**-register app (design serves the workflow, not a
+marketing surface). Before any UI/frontend work, read `PRODUCT.md`
+(strategy: users, purpose, brand personality, anti-references, design
+principles) and `DESIGN.md` (visual system: colors, typography, elevation,
+components — currently a seed, not yet extracted from real code). Both are
+maintained via the `impeccable` skill (`$impeccable teach` / `$impeccable
+document`).

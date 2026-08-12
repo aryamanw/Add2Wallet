@@ -1,0 +1,127 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--color-fg-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 176px;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-subtle);
+  color: var(--color-fg-muted);
+  text-align: center;
+  padding: 16px;
+  transition:
+    border-color var(--duration-base) var(--ease-out-quart),
+    background-color var(--duration-base) var(--ease-out-quart);
+}
+
+.dropzone:hover {
+  border-color: var(--color-accent);
+}
+
+.dropzoneActive {
+  border-color: var(--color-accent);
+  border-style: solid;
+  background: var(--color-accent-subtle);
+}
+
+.dropzoneIcon {
+  color: var(--color-fg-faint);
+}
+
+.dropzoneActive .dropzoneIcon {
+  color: var(--color-accent);
+}
+
+.dropzoneLabel {
+  font-size: 14px;
+}
+
+.dropzoneLabel button {
+  color: var(--color-accent);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.dropzoneHint {
+  font-size: 12px;
+  color: var(--color-fg-faint);
+}
+
+.selectedFile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.selectedFileName {
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selectedFileMeta {
+  font-size: 12px;
+  color: var(--color-fg-faint);
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--color-accent-fg);
+  border-top-color: transparent;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rawTextIntro {
+  margin-bottom: 6px;
+}
+
+.rawText {
+  max-height: 220px;
+  overflow: auto;
+  padding: 10px;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--radius-control) - 2px);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

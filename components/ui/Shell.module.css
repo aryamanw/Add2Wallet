@@ -1,0 +1,51 @@
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100dvh;
+  padding: 28px 20px 64px;
+}
+
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  max-width: 640px;
+  margin-bottom: 40px;
+  color: var(--color-fg-faint);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.narrow {
+  max-width: 340px;
+  margin-top: 8vh;
+}
+
+.default {
+  max-width: 440px;
+}
+
+.wide {
+  max-width: 640px;
+}
+
+.xwide {
+  max-width: 900px;
+}
+
+@media (max-width: 480px) {
+  .narrow {
+    margin-top: 4vh;
+  }
+}

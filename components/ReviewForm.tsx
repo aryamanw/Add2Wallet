@@ -9,6 +9,13 @@ import {
   type PassField,
   type PassStyle,
 } from "@/lib/passSchema";
+import Shell from "@/components/ui/Shell";
+import Field from "@/components/ui/Field";
+import Button from "@/components/ui/Button";
+import StatusMessage from "@/components/ui/StatusMessage";
+import PassPreview from "@/components/PassPreview";
+import inputStyles from "@/components/ui/inputs.module.css";
+import styles from "./ReviewForm.module.css";
 
 type Props = {
   initialPassData: PassData;
@@ -19,6 +26,14 @@ type FieldListKey = "primaryFields" | "secondaryFields" | "auxiliaryFields";
 type TransitType = NonNullable<PassData["transitType"]>;
 
 const TRANSIT_TYPES: TransitType[] = ["Air", "Boat", "Bus", "Generic", "Train"];
+const BARCODE_FORMATS: PassData["barcodeFormat"][] = ["QR", "PDF417", "Aztec", "Code128"];
+const STYLE_LABELS: Record<PassStyle, string> = {
+  eventTicket: "Event ticket",
+  boardingPass: "Boarding pass",
+  coupon: "Coupon",
+  storeCard: "Store card",
+  generic: "Generic",
+};
 
 /** Converts a "#rrggbb" color picker value into the schema's "rgb(r, g, b)" string. */
 function hexToRgbString(hex: string): string {
@@ -39,41 +54,50 @@ function rgbStringToHex(rgb: string): string {
 
 function FieldListEditor({
   title,
+  hint,
   fields,
   onChange,
-  emphasize,
+  mono,
 }: {
   title: string;
+  hint?: string;
   fields: PassField[];
   onChange: (fields: PassField[]) => void;
-  emphasize?: boolean;
+  mono?: boolean;
 }) {
+  if (fields.length === 0) return null;
   return (
-    <fieldset style={{ marginBottom: 12 }}>
-      <legend>{title}</legend>
-      {fields.map((field, i) => (
-        <div key={field.key} style={{ display: "flex", gap: 8, marginBottom: 4 }}>
-          <input
-            value={field.label}
-            onChange={(e) => {
-              const next = [...fields];
-              next[i] = { ...field, label: e.target.value };
-              onChange(next);
-            }}
-            style={{ flex: 1 }}
-          />
-          <input
-            value={field.value}
-            onChange={(e) => {
-              const next = [...fields];
-              next[i] = { ...field, value: e.target.value };
-              onChange(next);
-            }}
-            style={{ flex: 1, fontWeight: emphasize ? "bold" : "normal" }}
-          />
-        </div>
-      ))}
-    </fieldset>
+    <div>
+      <p className={styles.fieldGroupHeading}>
+        {title} {hint && <span className={styles.fieldGroupHint}>· {hint}</span>}
+      </p>
+      <div className={styles.fieldList}>
+        {fields.map((field, i) => (
+          <div key={field.key} className={styles.fieldListRow}>
+            <input
+              value={field.label}
+              onChange={(e) => {
+                const next = [...fields];
+                next[i] = { ...field, label: e.target.value };
+                onChange(next);
+              }}
+              aria-label={`${title} label ${i + 1}`}
+              className={`${inputStyles.input} ${styles.fieldListLabelInput}`}
+            />
+            <input
+              value={field.value}
+              onChange={(e) => {
+                const next = [...fields];
+                next[i] = { ...field, value: e.target.value };
+                onChange(next);
+              }}
+              aria-label={`${title} value ${i + 1}`}
+              className={`${inputStyles.input} ${styles.fieldListValueInput} ${mono ? inputStyles.mono : ""}`}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -129,150 +153,208 @@ export default function ReviewForm({ initialPassData, onBack }: Props) {
   }
 
   return (
-    <main style={{ maxWidth: 480, margin: "40px auto", padding: 16 }}>
-      <h1>Review pass</h1>
-
-      <label>
-        Title
-        <input
-          value={passData.title}
-          onChange={(e) => updateField("title", e.target.value)}
-          style={{ width: "100%", padding: 8, marginBottom: 8 }}
-        />
-      </label>
-
-      <label>
-        Description
-        <input
-          value={passData.description}
-          onChange={(e) => updateField("description", e.target.value)}
-          style={{ width: "100%", padding: 8, marginBottom: 8 }}
-        />
-      </label>
-
-      <label>
-        Organization name
-        <input
-          value={passData.organizationName}
-          onChange={(e) => updateField("organizationName", e.target.value)}
-          style={{ width: "100%", padding: 8, marginBottom: 8 }}
-        />
-      </label>
-
-      <label>
-        Style
-        <select
-          value={passData.style}
-          onChange={(e) => updateField("style", e.target.value as PassStyle)}
-          style={{ width: "100%", padding: 8, marginBottom: 8 }}
-        >
-          {PASS_STYLES.map((style) => (
-            <option key={style} value={style}>
-              {style}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      {passData.style === "boardingPass" && (
-        <label>
-          Transit type
-          <select
-            value={passData.transitType ?? "Generic"}
-            onChange={(e) => updateField("transitType", e.target.value as TransitType)}
-            style={{ width: "100%", padding: 8, marginBottom: 8 }}
-          >
-            {TRANSIT_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </label>
-      )}
-
-      <div style={{ display: "flex", gap: 16, marginBottom: 8 }}>
-        <label style={{ flex: 1 }}>
-          Background color
-          <input
-            type="color"
-            value={rgbStringToHex(passData.backgroundColor)}
-            onChange={(e) => updateField("backgroundColor", hexToRgbString(e.target.value))}
-            style={{ width: "100%", padding: 4 }}
-          />
-        </label>
-        <label style={{ flex: 1 }}>
-          Foreground color
-          <input
-            type="color"
-            value={rgbStringToHex(passData.foregroundColor)}
-            onChange={(e) => updateField("foregroundColor", hexToRgbString(e.target.value))}
-            style={{ width: "100%", padding: 4 }}
-          />
-        </label>
+    <Shell width="xwide">
+      <div className={styles.header}>
+        <h1 className={styles.title}>Review pass</h1>
+        <p className={styles.subtitle}>
+          Check the details below, especially the barcode and dates, before generating.
+        </p>
       </div>
 
-      <label>
-        Barcode value
-        <input
-          value={passData.barcodeValue}
-          onChange={(e) => updateField("barcodeValue", e.target.value)}
-          style={{ width: "100%", padding: 8, marginBottom: 12, fontWeight: "bold" }}
-        />
-      </label>
-
-      <FieldListEditor
-        title="Primary fields"
-        fields={passData.primaryFields}
-        onChange={(fields) => updateField("primaryFields" as FieldListKey, fields)}
-        emphasize
-      />
-      <FieldListEditor
-        title="Secondary fields (dates usually go here)"
-        fields={passData.secondaryFields}
-        onChange={(fields) => updateField("secondaryFields" as FieldListKey, fields)}
-        emphasize
-      />
-      <FieldListEditor
-        title="Auxiliary fields"
-        fields={passData.auxiliaryFields}
-        onChange={(fields) => updateField("auxiliaryFields" as FieldListKey, fields)}
-      />
-
-      {!validation.success && validationMessages.length > 0 && (
-        <div style={{ color: "#b45309", marginBottom: 12 }}>
-          <p>Fix the following before generating:</p>
-          <ul>
-            {validationMessages.map((message, i) => (
-              <li key={i}>{message}</li>
-            ))}
-          </ul>
+      <div className={styles.grid}>
+        <div className={styles.previewCol}>
+          <PassPreview passData={passData} />
+          <p className={styles.previewCaption}>This is what lands in Wallet.</p>
         </div>
-      )}
 
-      {error && (
-        <div style={{ color: "red", marginBottom: 12 }}>
-          <p>{error}</p>
-          {serverIssues.length > 0 && (
-            <ul>
-              {serverIssues.map((message, i) => (
-                <li key={i}>{message}</li>
-              ))}
-            </ul>
+        <form
+          className={styles.form}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleGenerate();
+          }}
+        >
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>Details</h2>
+
+            <Field label="Title" htmlFor="title">
+              <input
+                id="title"
+                value={passData.title}
+                onChange={(e) => updateField("title", e.target.value)}
+                className={inputStyles.input}
+              />
+            </Field>
+
+            <Field label="Description" htmlFor="description">
+              <input
+                id="description"
+                value={passData.description}
+                onChange={(e) => updateField("description", e.target.value)}
+                className={inputStyles.input}
+              />
+            </Field>
+
+            <Field label="Organization name" htmlFor="organizationName">
+              <input
+                id="organizationName"
+                value={passData.organizationName}
+                onChange={(e) => updateField("organizationName", e.target.value)}
+                className={inputStyles.input}
+              />
+            </Field>
+
+            <div className={styles.row}>
+              <Field label="Style" htmlFor="style">
+                <select
+                  id="style"
+                  value={passData.style}
+                  onChange={(e) => updateField("style", e.target.value as PassStyle)}
+                  className={inputStyles.select}
+                >
+                  {PASS_STYLES.map((style) => (
+                    <option key={style} value={style}>
+                      {STYLE_LABELS[style]}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+
+              {passData.style === "boardingPass" && (
+                <Field label="Transit type" htmlFor="transitType">
+                  <select
+                    id="transitType"
+                    value={passData.transitType ?? "Generic"}
+                    onChange={(e) => updateField("transitType", e.target.value as TransitType)}
+                    className={inputStyles.select}
+                  >
+                    {TRANSIT_TYPES.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+              )}
+            </div>
+          </div>
+
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>Appearance</h2>
+            <div className={styles.row}>
+              <Field label="Background color" htmlFor="backgroundColor">
+                <input
+                  id="backgroundColor"
+                  type="color"
+                  value={rgbStringToHex(passData.backgroundColor)}
+                  onChange={(e) => updateField("backgroundColor", hexToRgbString(e.target.value))}
+                  className={inputStyles.colorInput}
+                />
+              </Field>
+              <Field label="Foreground color" htmlFor="foregroundColor">
+                <input
+                  id="foregroundColor"
+                  type="color"
+                  value={rgbStringToHex(passData.foregroundColor)}
+                  onChange={(e) => updateField("foregroundColor", hexToRgbString(e.target.value))}
+                  className={inputStyles.colorInput}
+                />
+              </Field>
+            </div>
+          </div>
+
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>Barcode</h2>
+            <div className={styles.row}>
+              <Field label="Barcode value" htmlFor="barcodeValue" hint="Verify this carefully — a wrong value means the pass won't scan.">
+                <input
+                  id="barcodeValue"
+                  value={passData.barcodeValue}
+                  onChange={(e) => updateField("barcodeValue", e.target.value)}
+                  className={`${inputStyles.input} ${inputStyles.mono}`}
+                />
+              </Field>
+              <Field label="Barcode format" htmlFor="barcodeFormat">
+                <select
+                  id="barcodeFormat"
+                  value={passData.barcodeFormat}
+                  onChange={(e) => updateField("barcodeFormat", e.target.value as PassData["barcodeFormat"])}
+                  className={inputStyles.select}
+                >
+                  {BARCODE_FORMATS.map((format) => (
+                    <option key={format} value={format}>
+                      {format}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+          </div>
+
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>Fields</h2>
+            <FieldListEditor
+              title="Primary fields"
+              fields={passData.primaryFields}
+              onChange={(fields) => updateField("primaryFields" as FieldListKey, fields)}
+              mono
+            />
+            <FieldListEditor
+              title="Secondary fields"
+              hint="dates usually go here"
+              fields={passData.secondaryFields}
+              onChange={(fields) => updateField("secondaryFields" as FieldListKey, fields)}
+              mono
+            />
+            <FieldListEditor
+              title="Auxiliary fields"
+              fields={passData.auxiliaryFields}
+              onChange={(fields) => updateField("auxiliaryFields" as FieldListKey, fields)}
+            />
+          </div>
+
+          {!validation.success && validationMessages.length > 0 && (
+            <StatusMessage
+              variant="error"
+              details={
+                <ul>
+                  {validationMessages.map((message, i) => (
+                    <li key={i}>{message}</li>
+                  ))}
+                </ul>
+              }
+            >
+              Fix the following before generating
+            </StatusMessage>
           )}
-        </div>
-      )}
 
-      <button onClick={onBack} disabled={generating}>
-        Back
-      </button>
-      <button
-        onClick={handleGenerate}
-        disabled={generating || !validation.success}
-        style={{ marginLeft: 8 }}
-      >
-        {generating ? "Generating..." : "Generate pass"}
-      </button>
-    </main>
+          {error && (
+            <StatusMessage
+              variant="error"
+              details={
+                serverIssues.length > 0 && (
+                  <ul>
+                    {serverIssues.map((message, i) => (
+                      <li key={i}>{message}</li>
+                    ))}
+                  </ul>
+                )
+              }
+            >
+              {error}
+            </StatusMessage>
+          )}
+
+          <div className={styles.actions}>
+            <Button type="button" variant="ghost" onClick={onBack} disabled={generating}>
+              Back
+            </Button>
+            <Button type="submit" disabled={generating || !validation.success}>
+              {generating ? "Generating..." : "Generate pass"}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </Shell>
   );
 }

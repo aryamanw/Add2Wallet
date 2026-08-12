@@ -3,6 +3,12 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Shell from "@/components/ui/Shell";
+import Field from "@/components/ui/Field";
+import Button from "@/components/ui/Button";
+import StatusMessage from "@/components/ui/StatusMessage";
+import inputStyles from "@/components/ui/inputs.module.css";
+import styles from "./login.module.css";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -33,22 +39,31 @@ export default function LoginPage() {
   }
 
   return (
-    <main style={{ maxWidth: 320, margin: "80px auto", padding: 16 }}>
-      <h1>Add2Wallet</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          autoFocus
-          style={{ width: "100%", padding: 8, marginBottom: 8 }}
-        />
-        <button type="submit" disabled={submitting} style={{ width: "100%", padding: 8 }}>
+    <Shell width="narrow">
+      <div className={styles.header}>
+        <h1 className={styles.title}>Welcome back</h1>
+        <p className={styles.subtitle}>Enter the password to continue.</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <Field label="Password" htmlFor="password">
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoFocus
+            autoComplete="current-password"
+            className={inputStyles.input}
+          />
+        </Field>
+
+        <Button type="submit" disabled={submitting || !password}>
           {submitting ? "Checking..." : "Log in"}
-        </button>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        </Button>
+
+        {error && <StatusMessage variant="error">{error}</StatusMessage>}
       </form>
-    </main>
+    </Shell>
   );
 }

@@ -1,0 +1,134 @@
+.pass {
+  position: relative;
+  isolation: isolate;
+  background: var(--pass-bg);
+  color: var(--pass-fg);
+  border-radius: var(--radius-pass);
+  box-shadow: var(--shadow-pass);
+  padding: 22px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+}
+
+/* A soft top-left sheen, the way light catches a stacked card in Wallet.
+   Not a literal glass material (the pass itself is a flat colored card,
+   per how passkit actually renders it) — just enough gloss to read as a
+   physical object rather than a flat div. */
+.pass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(160deg, rgb(255 255 255 / 0.16), transparent 45%);
+  pointer-events: none;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.org {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.82;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--pass-fg) 16%, transparent);
+  white-space: nowrap;
+}
+
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.description {
+  font-size: 13px;
+  opacity: 0.78;
+}
+
+.primaryRow,
+.secondaryRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.fieldLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  opacity: 0.65;
+}
+
+.fieldValueLg {
+  font-size: 16px;
+  font-weight: 600;
+  overflow-wrap: break-word;
+}
+
+.fieldValueSm {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.92;
+  overflow-wrap: break-word;
+}
+
+.barcodeRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  padding-top: 16px;
+  border-top: 1px solid color-mix(in srgb, var(--pass-fg) 18%, transparent);
+}
+
+.barcodeText {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.barcodeValue {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barcodeFormat {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+}

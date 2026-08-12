@@ -1,0 +1,50 @@
+.error,
+.success {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-control);
+  border: 1px solid;
+  font-size: 13px;
+}
+
+.error {
+  background: var(--color-danger-bg);
+  border-color: var(--color-danger-border);
+  color: var(--color-danger);
+}
+
+.success {
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.header svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.header p {
+  color: var(--color-fg);
+  line-height: 1.5;
+}
+
+.details {
+  color: var(--color-fg-muted);
+}
+
+.details ul {
+  list-style: disc;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
