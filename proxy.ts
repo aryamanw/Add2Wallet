@@ -2,10 +2,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SESSION_COOKIE_NAME, verifySessionCookieValue } from "@/lib/auth";
 
-const PUBLIC_PATHS = ["/login", "/api/login"];
-
 export function proxy(request: NextRequest) {
-  const isPublic = PUBLIC_PATHS.some((path) => request.nextUrl.pathname.startsWith(path));
+  const { pathname } = request.nextUrl;
+  const isPublic = pathname === "/login" || pathname === "/api/login";
   if (isPublic) {
     return NextResponse.next();
   }

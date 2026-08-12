@@ -10,15 +10,15 @@ vi.mock("tesseract.js", () => ({
   createWorker: vi.fn(),
 }));
 
-import { createWorker } from "tesseract.js";
+import { createWorker, type Worker } from "tesseract.js";
 import { extractPdfText, rasterizePdfToPngs } from "./pdf";
 import { ExtractionError, extractText, isSupportedMimeType } from "./ocr";
 
-function mockWorker(text: string) {
+function mockWorker(text: string): Worker {
   return {
     recognize: vi.fn().mockResolvedValue({ data: { text } }),
     terminate: vi.fn().mockResolvedValue(undefined),
-  };
+  } as unknown as Worker;
 }
 
 describe("isSupportedMimeType", () => {
@@ -55,7 +55,7 @@ describe("extractText", () => {
   it("falls back to OCR when the PDF has no embedded text", async () => {
     vi.mocked(extractPdfText).mockResolvedValue("");
     vi.mocked(rasterizePdfToPngs).mockResolvedValue([Buffer.from("page1")]);
-    vi.mocked(createWorker).mockResolvedValue(mockWorker("scanned text") as any);
+    vi.mocked(createWorker).mockResolvedValue(mockWorker("scanned text"));
 
     const result = await extractText(Buffer.from("pdf"), "application/pdf");
 
@@ -63,7 +63,7 @@ describe("extractText", () => {
   });
 
   it("OCRs images directly", async () => {
-    vi.mocked(createWorker).mockResolvedValue(mockWorker("image text") as any);
+    vi.mocked(createWorker).mockResolvedValue(mockWorker("image text"));
 
     const result = await extractText(Buffer.from("img"), "image/png");
 
@@ -71,7 +71,7 @@ describe("extractText", () => {
   });
 
   it("throws ExtractionError when OCR finds no text at all", async () => {
-    vi.mocked(createWorker).mockResolvedValue(mockWorker("") as any);
+    vi.mocked(createWorker).mockResolvedValue(mockWorker(""));
 
     await expect(extractText(Buffer.from("img"), "image/png")).rejects.toThrow(
       ExtractionError

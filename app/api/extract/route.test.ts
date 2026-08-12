@@ -1,4 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
+import type { NextRequest } from "next/server";
+import type { PassData } from "@/lib/passSchema";
 
 vi.mock("@/lib/ocr", () => ({
   extractText: vi.fn(),
@@ -26,7 +28,7 @@ function makeRequestWithFile(file: File | null) {
   return new Request("http://localhost/api/extract", {
     method: "POST",
     body: formData,
-  }) as any;
+  }) as unknown as NextRequest;
 }
 
 describe("POST /api/extract", () => {
@@ -37,7 +39,9 @@ describe("POST /api/extract", () => {
 
   it("returns structured pass data on success", async () => {
     vi.mocked(extractText).mockResolvedValue("raw ticket text");
-    vi.mocked(structureText).mockResolvedValue({ style: "generic" } as any);
+    vi.mocked(structureText).mockResolvedValue({
+      style: "generic",
+    } as unknown as PassData);
 
     const file = new File(["hello"], "ticket.png", { type: "image/png" });
     const response = await POST(makeRequestWithFile(file));

@@ -1,5 +1,6 @@
 // app/api/passes/route.test.ts
 import { describe, expect, it, vi } from "vitest";
+import type { NextRequest } from "next/server";
 
 vi.mock("@/lib/buildPass", () => ({
   buildPass: vi.fn(),
@@ -26,7 +27,7 @@ function makeRequest(body: unknown) {
   return new Request("http://localhost/api/passes", {
     method: "POST",
     body: JSON.stringify(body),
-  }) as any;
+  }) as unknown as NextRequest;
 }
 
 describe("POST /api/passes", () => {

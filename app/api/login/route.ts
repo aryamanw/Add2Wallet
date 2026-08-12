@@ -5,7 +5,14 @@ import { checkPassword, createSessionCookieValue, SESSION_COOKIE_NAME } from "@/
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
-  const { password } = await request.json();
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  const { password } = (body ?? {}) as { password?: unknown };
 
   if (typeof password !== "string" || !checkPassword(password)) {
     return NextResponse.json({ error: "Incorrect password" }, { status: 401 });

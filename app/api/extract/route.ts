@@ -8,7 +8,13 @@ export const maxDuration = 60;
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
 export async function POST(request: NextRequest) {
-  const formData = await request.formData();
+  let formData: FormData;
+  try {
+    formData = await request.formData();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
   const file = formData.get("file");
 
   if (!(file instanceof File)) {
