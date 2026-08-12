@@ -25,20 +25,24 @@ export default function UploadForm({ onExtracted }: Props) {
     const formData = new FormData();
     formData.set("file", file);
 
-    const response = await fetch("/api/extract", { method: "POST", body: formData });
-    const body = await response.json();
+    try {
+      const response = await fetch("/api/extract", { method: "POST", body: formData });
+      const body = await response.json();
 
-    setLoading(false);
-
-    if (!response.ok) {
-      setError(body.error ?? "Failed to process the file");
-      if (typeof body.rawText === "string") {
-        setRawTextOnFailure(body.rawText);
+      if (!response.ok) {
+        setError(body.error ?? "Failed to process the file");
+        if (typeof body.rawText === "string") {
+          setRawTextOnFailure(body.rawText);
+        }
+        return;
       }
-      return;
-    }
 
-    onExtracted(body.passData, body.rawText);
+      onExtracted(body.passData, body.rawText);
+    } catch {
+      setError("Failed to process the file");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (

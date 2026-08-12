@@ -64,23 +64,27 @@ export default function ReviewForm({ initialPassData, onBack }: Props) {
     setGenerating(true);
     setError(null);
 
-    const response = await fetch("/api/passes", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(passData),
-    });
+    try {
+      const response = await fetch("/api/passes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(passData),
+      });
 
-    if (!response.ok) {
-      const body = await response.json().catch(() => ({}));
-      setError(body.error ?? "Failed to generate the pass");
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        setError(body.error ?? "Failed to generate the pass");
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      window.location.href = url;
+    } catch {
+      setError("Failed to generate the pass");
+    } finally {
       setGenerating(false);
-      return;
     }
-
-    const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
-    window.location.href = url;
-    setGenerating(false);
   }
 
   return (
