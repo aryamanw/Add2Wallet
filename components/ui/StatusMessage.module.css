@@ -1,5 +1,4 @@
-.error,
-.success {
+.error {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -7,18 +6,9 @@
   border-radius: var(--radius-control);
   border: 1px solid;
   font-size: 13px;
-}
-
-.error {
   background: var(--color-danger-bg);
   border-color: var(--color-danger-border);
   color: var(--color-danger);
-}
-
-.success {
-  background: var(--color-success-bg);
-  border-color: var(--color-success);
-  color: var(--color-success);
 }
 
 .header {

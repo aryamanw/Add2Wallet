@@ -132,7 +132,6 @@ export default function UploadForm({ onExtracted }: Props) {
 
         {error && (
           <StatusMessage
-            variant="error"
             details={
               rawTextOnFailure && (
                 <>

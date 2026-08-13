@@ -62,7 +62,7 @@ export default function LoginPage() {
           {submitting ? "Checking..." : "Log in"}
         </Button>
 
-        {error && <StatusMessage variant="error">{error}</StatusMessage>}
+        {error && <StatusMessage>{error}</StatusMessage>}
       </form>
     </Shell>
   );

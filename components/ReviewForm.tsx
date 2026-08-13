@@ -315,7 +315,6 @@ export default function ReviewForm({ initialPassData, onBack }: Props) {
 
           {!validation.success && validationMessages.length > 0 && (
             <StatusMessage
-              variant="error"
               details={
                 <ul>
                   {validationMessages.map((message, i) => (
@@ -330,7 +329,6 @@ export default function ReviewForm({ initialPassData, onBack }: Props) {
 
           {error && (
             <StatusMessage
-              variant="error"
               details={
                 serverIssues.length > 0 && (
                   <ul>

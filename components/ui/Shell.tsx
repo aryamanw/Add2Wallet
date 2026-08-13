@@ -3,7 +3,7 @@ import { Wallet } from "@phosphor-icons/react/dist/ssr";
 import styles from "./Shell.module.css";
 
 type Props = {
-  width?: "narrow" | "default" | "wide" | "xwide";
+  width?: "narrow" | "default" | "xwide";
   children: ReactNode;
 };
 
